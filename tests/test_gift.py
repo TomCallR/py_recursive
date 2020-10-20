@@ -1,15 +1,13 @@
-import builtins
 import unittest
 
-# import lib
-import lib.gift
-from lib.gift import Gift, Book, ChocolateType, Chocolate, WithACard, WrappedGift, WrappingPaperStyle, BoxedGift
+from decimal import Decimal as D
+from lib.gift import Book, ChocolateType, Chocolate, WithACard, WrappedGift, WrappingPaperStyle, BoxedGift
 
 def build_data():    
-    wolfHall = Book(title="Wolf Hall", price=20)
+    wolfHall = Book(title="Wolf Hall", price=2000)
     yummyChoc = Chocolate(
         type=ChocolateType.SeventyPercent,
-        price = 5)
+        price = 500)
     birthdayPresent = WithACard(
         gift = WrappedGift(gift = wolfHall, paper = WrappingPaperStyle.HappyBirthday),
         message = "Happy Birthday")
@@ -34,6 +32,11 @@ class TestGiftDeclaration(unittest.TestCase):
             "SeventyPercent chocolate in a box wrapped in HappyHolidays paper"
             )
 
+    #
+    def test_total_cost(self):
+        wolfHall, yummyChoc, birthdayPresent, christmasPresent = build_data()
+        self.assertEqual(birthdayPresent.total_cost(), D("22.5"))
+        self.assertEqual(christmasPresent.total_cost(), D("6.5"))
 
 if __name__ == "__main__":
     unittest.main()
