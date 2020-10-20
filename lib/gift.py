@@ -2,13 +2,18 @@ from enum import Enum
 
 # Gift base class
 class Gift:
-    pass
+    def __str__(self):
+        raise NotImplementedError
 
 # Book class
 class Book(Gift):
+    #
     def __init__(self, title: str, price: int):
         self.title = title
         self.price = price
+    #
+    def __str__(self):
+        return f"\"{self.title}\""
 
 # Chocolate enum
 class ChocolateType(Enum):
@@ -18,9 +23,13 @@ class ChocolateType(Enum):
 
 # Chocolate class
 class Chocolate(Gift):
+    #
     def __init__(self, type: ChocolateType, price: int):
-        self.type = ChocolateType
+        self.type = type
         self.price = price
+    #
+    def __str__(self):
+        return f"{self.type.name} chocolate"
 
 # WrappingPaperStyle enum
 class WrappingPaperStyle(Enum):
@@ -30,21 +39,33 @@ class WrappingPaperStyle(Enum):
 
 # WrappedGift class
 class WrappedGift(Gift):
+    #
     def __init__(self, gift: Gift, paper: WrappingPaperStyle):
         self.gift = gift
         self.paper = paper
+    #
+    def __str__(self):
+        return f"{self.gift.__str__()} wrapped in {self.paper.name} paper"
 
 # BoxedGift class
 class BoxedGift(Gift):
+    #
     def __init__(self, gift: Gift):
         self.gift = gift
+    #
+    def __str__(self):
+        return f"{self.gift.__str__()} in a box"
 
 # WithACard class
 class WithACard(Gift):
+    #
     def __init__(self, gift: Gift, message: str):
         self.gift = gift
         self.message = message
+    #
+    def __str__(self):
+        return f"{self.gift.__str__()} with a card saying \"{self.message}\""
 
-# if __name__ == "__main__":
-#     print("Hello world")
+if __name__ == "__main__":
+    print("Hello world")
 

@@ -21,12 +21,19 @@ def build_data():
 class TestGiftDeclaration(unittest.TestCase):
 
     #
-    def test_basic_print_attributes(self):
+    def test_print_description(self):
         wolfHall, yummyChoc, birthdayPresent, christmasPresent = build_data()
-        print(f"{wolfHall.title} - {wolfHall.price}")
-        print(f"{yummyChoc.type} - {yummyChoc.price}")
-        print(f"{birthdayPresent.gift} - {birthdayPresent.message}")
-        print(f"{christmasPresent.gift} - {christmasPresent.paper}")
+        self.assertEqual(wolfHall.__str__(), "\"Wolf Hall\"")
+        self.assertEqual(yummyChoc.__str__(), "SeventyPercent chocolate")
+        self.assertEqual(
+            birthdayPresent.__str__(),
+            "\"Wolf Hall\" wrapped in HappyBirthday paper with a card saying \"Happy Birthday\""
+            )
+        self.assertEqual(
+            christmasPresent.__str__(),
+            "SeventyPercent chocolate in a box wrapped in HappyHolidays paper"
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
