@@ -1,4 +1,5 @@
 from typing import List
+import functools
 
 class FileSysItem:
     #
@@ -18,6 +19,21 @@ class FileSysItem:
         def dir_size(name: str, size: int, subres: List[int]):
             return size + sum(subres)
         return self.cata(file_size, dir_size)
+    #
+    def largest_file(self):
+        def self_file(item: File):
+            return item
+        def dir_largest_file(name: str, size: int, subres: List[File]):
+            def compare(old: File, new: File):
+                if old is None:
+                    old = new
+                elif new is not None and new.size > old.size:
+                    old = new
+                return old
+            res = functools.reduce(compare, subres, None)
+            return res
+        return self.cata(self_file, dir_largest_file)
+
 
 
 class File(FileSysItem):

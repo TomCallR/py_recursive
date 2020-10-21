@@ -19,7 +19,13 @@ class TestFileSys(unittest.TestCase):
         self.assertEqual(readme.total_size(), 1)
         self.assertEqual(src.total_size(), 16)
         self.assertEqual(root.total_size(), 31)
-
+    #
+    def test_largestfile(self):
+        readme, config, build, src, bin, root = build_data()
+        self.assertEqual(readme.largest_file(), readme)
+        self.assertEqual(src.largest_file(), build)
+        self.assertEqual(bin.largest_file(), None)
+        self.assertEqual(root.largest_file(), build)
 
 if __name__ == "__main__":
     unittest.main()
