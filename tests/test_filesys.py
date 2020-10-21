@@ -16,13 +16,9 @@ class TestFileSys(unittest.TestCase):
     #
     def test_totalsize(self):
         readme, config, build, src, bin, root = build_data()
-        def fFile(item: File):
-            return item.size
-        def fDir(name: str, size: int, subres: List[int]):
-            return size + sum(subres)
-        self.assertEqual(readme.cata(fFile, fDir), 1)
-        self.assertEqual(src.cata(fFile, fDir), 16)
-        self.assertEqual(root.cata(fFile, fDir), 31)
+        self.assertEqual(readme.total_size(), 1)
+        self.assertEqual(src.total_size(), 16)
+        self.assertEqual(root.total_size(), 31)
 
 
 if __name__ == "__main__":
