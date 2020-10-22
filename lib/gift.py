@@ -4,9 +4,23 @@ from lib.helpers import Convert
 
 # Gift base class
 class Gift:
+    #
     def __str__(self):
         raise NotImplementedError
-
+    #
+    def total_cost_fold(self):
+        def fBook(acc, book: Book):
+            return acc + book.price
+        def fChocolate(acc, choc: Chocolate):
+            return acc + choc.price
+        def fWrapped(acc, paper: WrappingPaperStyle):
+            return acc + D("0.50")
+        def fBoxed(acc):
+            return acc + D("1.00")
+        def fWithCard(acc, message: str):
+            return acc + D("2.00")
+        return self.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, D("0.00"))
+ 
 # Book class
 class Book(Gift):
     #
@@ -16,6 +30,9 @@ class Book(Gift):
     #
     def __str__(self):
         return f"\"{self.title}\""
+    #
+    def fold(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, acc):
+        return fBook(acc, self)
     #
     def total_cost(self):
         return self.price
@@ -36,6 +53,9 @@ class Chocolate(Gift):
     def __str__(self):
         return f"{self.type.name} chocolate"
     #
+    def fold(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, acc):
+        return fChocolate(acc, self)
+    #
     def total_cost(self):
         return self.price
 
@@ -55,6 +75,10 @@ class WrappedGift(Gift):
     def __str__(self):
         return f"{self.gift.__str__()} wrapped in {self.paper.name} paper"
     #
+    def fold(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, acc):
+        newacc = fWrapped(acc, self.paper)
+        return self.gift.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, newacc)
+    #
     def total_cost(self):
         wrapping_price = D("0.50")
         return self.gift.total_cost() + wrapping_price
@@ -67,6 +91,10 @@ class BoxedGift(Gift):
     #
     def __str__(self):
         return f"{self.gift.__str__()} in a box"
+    #
+    def fold(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, acc):
+        newacc = fBoxed(acc)
+        return self.gift.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, newacc)
     #
     def total_cost(self):
         box_price = D("1.00")
@@ -81,6 +109,10 @@ class WithACard(Gift):
     #
     def __str__(self):
         return f"{self.gift.__str__()} with a card saying \"{self.message}\""
+    #
+    def fold(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, acc):
+        newacc = fWithCard(acc, self.message)
+        return self.gift.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, newacc)
     #
     def total_cost(self):
         card_price = D("2.00")

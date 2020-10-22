@@ -38,5 +38,12 @@ class TestGiftDeclaration(unittest.TestCase):
         self.assertEqual(birthdayPresent.total_cost(), D("22.5"))
         self.assertEqual(christmasPresent.total_cost(), D("6.5"))
 
+    #
+    def test_total_cost_fold(self):
+        wolfHall, yummyChoc, birthdayPresent, christmasPresent = build_data()
+        self.assertEqual(birthdayPresent.total_cost_fold(), D("22.5"))
+        self.assertEqual(christmasPresent.total_cost_fold(), D("6.5"))
+
+
 if __name__ == "__main__":
     unittest.main()
