@@ -32,6 +32,20 @@ class TestGiftDeclaration(unittest.TestCase):
             "SeventyPercent chocolate in a box wrapped in HappyHolidays paper"
             )
 
+    # Fails on purpose : fold mixes the order of elements
+    # def test_description_fold(self):
+    #     wolfHall, yummyChoc, birthdayPresent, christmasPresent = build_data()
+    #     self.assertEqual(wolfHall.description_fold(), "\"Wolf Hall\"")
+    #     self.assertEqual(yummyChoc.description_fold(), "SeventyPercent chocolate")
+    #     self.assertEqual(
+    #         birthdayPresent.description_fold(),
+    #         "\"Wolf Hall\" wrapped in HappyBirthday paper with a card saying \"Happy Birthday\""
+    #     )
+    #     self.assertEqual(
+    #         christmasPresent.description_fold(),
+    #         "SeventyPercent chocolate in a box wrapped in HappyHolidays paper"
+    #     )
+
     #
     def test_total_cost(self):
         wolfHall, yummyChoc, birthdayPresent, christmasPresent = build_data()

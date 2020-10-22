@@ -20,6 +20,19 @@ class Gift:
         def fWithCard(acc, message: str):
             return acc + D("2.00")
         return self.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, D("0.00"))
+    #
+    def description_fold(self):
+        def fBook(acc, book: Book):
+            return f"\"{book.title}\" {acc}"
+        def fChocolate(acc, choc: Chocolate):
+            return f"{choc.type.name} chocolate {acc}"
+        def fWrapped(acc, paper: WrappingPaperStyle):
+            return f"{acc} wrapped in {paper.name} paper"
+        def fBoxed(acc):
+            return f"{acc} in a box"
+        def fWithCard(acc, message: str):
+            return f"{acc} with a card saying \"{message}\""
+        return self.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, "")
  
 # Book class
 class Book(Gift):
