@@ -25,4 +25,16 @@ def build_data():
     return label, bottle, formulation, shampoo, twoPack
 
 class TestProduct(unittest.TestCase):
-    pass
+    #
+    def test_weight(self):
+        label, bottle, formulation, shampoo, twoPack = build_data()
+        self.assertEqual(label.total_weight(), 1)
+        self.assertEqual(shampoo.total_weight(), 17)
+        self.assertEqual(twoPack.total_weight(), 39)
+    #
+    def test_most_used_vendor(self):
+        label, bottle, formulation, shampoo, twoPack = build_data()
+        self.assertEqual(label.most_used_vendor(), ("ACME", 1))
+        self.assertEqual(formulation.most_used_vendor(), None)
+        self.assertEqual(shampoo.most_used_vendor(), ("ACME", 2))
+        self.assertEqual(twoPack.most_used_vendor(), ("ACME", 2))
