@@ -20,20 +20,36 @@ class Gift:
         def fWithCard(acc, message: str):
             return acc + D("2.00")
         return self.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, D("0.00"))
+
+    # not quite satisfying : string bits mixes up
+    # def description_fold(self):
+    #     def fBook(acc, book: Book):
+    #         return f"\"{book.title}\" {acc}"
+    #     def fChocolate(acc, choc: Chocolate):
+    #         return f"{choc.type.name} chocolate {acc}"
+    #     def fWrapped(acc, paper: WrappingPaperStyle):
+    #         return f"{acc} wrapped in {paper.name} paper"
+    #     def fBoxed(acc):
+    #         return f"{acc} in a box"
+    #     def fWithCard(acc, message: str):
+    #         return f"{acc} with a card saying \"{message}\""
+    #     return self.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, "")
     #
-    def description_fold(self):
-        def fBook(acc, book: Book):
-            return f"\"{book.title}\" {acc}"
-        def fChocolate(acc, choc: Chocolate):
-            return f"{choc.type.name} chocolate {acc}"
-        def fWrapped(acc, paper: WrappingPaperStyle):
-            return f"{acc} wrapped in {paper.name} paper"
-        def fBoxed(acc):
-            return f"{acc} in a box"
-        def fWithCard(acc, message: str):
-            return f"{acc} with a card saying \"{message}\""
-        return self.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, "")
- 
+    
+    def description_fold_back(self):
+        def fBook(facc, book: Book):
+            return facc(f"\"{book.title}\"")
+        def fChocolate(facc, choc: Chocolate):
+            return facc(f"{choc.type.name} chocolate")
+        def fWrapped(facc, paper: WrappingPaperStyle):
+            return lambda x : facc(f"{x} wrapped in {paper.name} paper")
+        def fBoxed(facc):
+            return lambda x : facc(f"{x} in a box")
+        def fWithCard(facc, message: str):
+            return lambda x : facc(f"{x} with a card saying \"{message}\"")
+        return self.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, lambda x : x)
+
+
 # Book class
 class Book(Gift):
     #

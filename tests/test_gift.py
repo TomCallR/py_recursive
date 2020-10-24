@@ -47,6 +47,20 @@ class TestGiftDeclaration(unittest.TestCase):
     #     )
 
     #
+    def test_print_description_fold_back(self):
+        wolfHall, yummyChoc, birthdayPresent, christmasPresent = build_data()
+        self.assertEqual(wolfHall.description_fold_back(), "\"Wolf Hall\"")
+        self.assertEqual(yummyChoc.description_fold_back(), "SeventyPercent chocolate")
+        self.assertEqual(
+            birthdayPresent.description_fold_back(),
+            "\"Wolf Hall\" wrapped in HappyBirthday paper with a card saying \"Happy Birthday\""
+        )
+        self.assertEqual(
+            christmasPresent.description_fold_back(),
+            "SeventyPercent chocolate in a box wrapped in HappyHolidays paper"
+        )
+
+    #
     def test_total_cost(self):
         wolfHall, yummyChoc, birthdayPresent, christmasPresent = build_data()
         self.assertEqual(birthdayPresent.total_cost(), D("22.5"))
