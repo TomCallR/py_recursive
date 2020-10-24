@@ -34,8 +34,8 @@ class Gift:
     #     def fWithCard(acc, message: str):
     #         return f"{acc} with a card saying \"{message}\""
     #     return self.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, "")
+
     #
-    
     def description_fold_back(self):
         def fBook(facc, book: Book):
             return facc(f"\"{book.title}\"")
@@ -49,6 +49,19 @@ class Gift:
             return lambda x : facc(f"{x} with a card saying \"{message}\"")
         return self.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, lambda x : x)
 
+    #
+    def description_foldback(self):
+        def fBook(book: Book):
+            return f"\"{book.title}\""
+        def fChocolate(choc: Chocolate):
+            return f"{choc.type.name} chocolate"
+        def fWrapped(innertext: str, paper: WrappingPaperStyle):
+            return f"{innertext} wrapped in {paper.name} paper"
+        def fBoxed(innertext: str):
+            return f"{innertext} in a box"
+        def fWithCard(innertext: str, message: str):
+            return f"{innertext} with a card saying \"{message}\""
+        return self.foldback(fBook, fChocolate, fWrapped, fBoxed, fWithCard, lambda x : x)
 
 # Book class
 class Book(Gift):
@@ -62,6 +75,9 @@ class Book(Gift):
     #
     def fold(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, acc):
         return fBook(acc, self)
+    #
+    def foldback(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, facc):
+        return facc(fBook(self))
     #
     def total_cost(self):
         return self.price
@@ -84,6 +100,9 @@ class Chocolate(Gift):
     #
     def fold(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, acc):
         return fChocolate(acc, self)
+    #
+    def foldback(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, facc):
+        return facc(fChocolate(self))
     #
     def total_cost(self):
         return self.price
@@ -108,6 +127,10 @@ class WrappedGift(Gift):
         newacc = fWrapped(acc, self.paper)
         return self.gift.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, newacc)
     #
+    def foldback(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, facc):
+        newfacc = lambda x : facc(fWrapped(x, self.paper))
+        return self.gift.foldback(fBook, fChocolate, fWrapped, fBoxed, fWithCard, newfacc)
+    #
     def total_cost(self):
         wrapping_price = D("0.50")
         return self.gift.total_cost() + wrapping_price
@@ -124,6 +147,10 @@ class BoxedGift(Gift):
     def fold(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, acc):
         newacc = fBoxed(acc)
         return self.gift.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, newacc)
+    #
+    def foldback(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, facc):
+        newfacc = lambda x : facc(fBoxed(x))
+        return self.gift.foldback(fBook, fChocolate, fWrapped, fBoxed, fWithCard, newfacc)
     #
     def total_cost(self):
         box_price = D("1.00")
@@ -142,6 +169,10 @@ class WithACard(Gift):
     def fold(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, acc):
         newacc = fWithCard(acc, self.message)
         return self.gift.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, newacc)
+    #
+    def foldback(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, facc):
+        newfacc = lambda x : facc(fWithCard(x, self.message))
+        return self.gift.foldback(fBook, fChocolate, fWrapped, fBoxed, fWithCard, newfacc)
     #
     def total_cost(self):
         card_price = D("2.00")
