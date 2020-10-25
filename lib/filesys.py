@@ -13,7 +13,7 @@ class FileSysItem:
     def cata(self, fFile, fDir):
         raise NotImplementedError
     #
-    def total_size(self):
+    def total_size_cata(self):
         def file_size(item: File):
             return item.size
         def dir_size(name: str, size: int, subres: List[int]):
@@ -33,7 +33,13 @@ class FileSysItem:
             res = functools.reduce(compare, subres, None)
             return res
         return self.cata(self_file, dir_largest_file)
-
+    #
+    def total_size_fold(self):
+        def file_size(acc: int, item: File):
+            return acc + item.size
+        def dir_size(acc: int, name: str, size: int):
+            return acc + size
+        return self.fold(file_size, dir_size, 0)
 
 
 class File(FileSysItem):
@@ -43,6 +49,9 @@ class File(FileSysItem):
     #
     def cata(self, fFile, fDir):
         return fFile(self)
+    #
+    def fold(self, fFile, fDir, acc):
+        return fFile(acc, self)
     
 class Directory(FileSysItem):
     def __init__(self, name: str, size: int, subitems: List[FileSysItem]):
@@ -52,6 +61,15 @@ class Directory(FileSysItem):
     def cata(self, fFile, fDir):
         subresults = [item.cata(fFile, fDir) for item in self.subitems]
         return fDir(self.name, self.size, subresults)
+    #
+    def fold(self, fFile, fDir, acc):
+        newacc = fDir(acc, self.name, self.size)
+        res = newacc
+        for item in self.subitems:
+            res = item.fold(fFile, fDir, res)
+        return res
+        # subresults = [item.fold(fFile, fDir, acc) for item in self.subitems]
+        # return fDir(self.name, self.size, subresults)
 
 if __name__ == "__main__":
     print("Hello world")
