@@ -20,18 +20,26 @@ class TestFileSys(unittest.TestCase):
         self.assertEqual(src.total_size_cata(), 16)
         self.assertEqual(root.total_size_cata(), 31)
     #
-    def test_largestfile(self):
+    def test_largestfile_cata(self):
         readme, config, build, src, bin, root = build_data()
-        self.assertEqual(readme.largest_file(), readme)
-        self.assertEqual(src.largest_file(), build)
-        self.assertEqual(bin.largest_file(), None)
-        self.assertEqual(root.largest_file(), build)
+        self.assertEqual(readme.largest_file_cata(), readme)
+        self.assertEqual(src.largest_file_cata(), build)
+        self.assertEqual(bin.largest_file_cata(), None)
+        self.assertEqual(root.largest_file_cata(), build)
     #
     def test_totalsize_fold(self):
         readme, config, build, src, bin, root = build_data()
         self.assertEqual(readme.total_size_fold(), 1)
         self.assertEqual(src.total_size_fold(), 16)
         self.assertEqual(root.total_size_fold(), 31)
+    #
+    def test_largestfile_fold(self):
+        readme, config, build, src, bin, root = build_data()
+        self.assertEqual(readme.largest_file_fold(), readme)
+        self.assertEqual(src.largest_file_fold(), build)
+        self.assertEqual(bin.largest_file_fold(), None)
+        self.assertEqual(root.largest_file_fold(), build)
+
 
 if __name__ == "__main__":
     unittest.main()

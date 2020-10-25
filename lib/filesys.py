@@ -20,7 +20,7 @@ class FileSysItem:
             return size + sum(subres)
         return self.cata(file_size, dir_size)
     #
-    def largest_file(self):
+    def largest_file_cata(self):
         def self_file(item: File):
             return item
         def dir_largest_file(name: str, size: int, subres: List[File]):
@@ -40,7 +40,20 @@ class FileSysItem:
         def dir_size(acc: int, name: str, size: int):
             return acc + size
         return self.fold(file_size, dir_size, 0)
-
+    #
+    def largest_file_fold(self):
+        def self_file(acc: File, item: File):
+            if acc is None:
+                return item
+            elif item is None:
+                return acc
+            elif item.size > acc.size:
+                return item
+            else:
+                return acc
+        def dir_largest_file(acc: File, name: str, size: int):
+            return acc
+        return self.fold(self_file, dir_largest_file, None)
 
 class File(FileSysItem):
     #
@@ -68,8 +81,7 @@ class Directory(FileSysItem):
         for item in self.subitems:
             res = item.fold(fFile, fDir, res)
         return res
-        # subresults = [item.fold(fFile, fDir, acc) for item in self.subitems]
-        # return fDir(self.name, self.size, subresults)
+
 
 if __name__ == "__main__":
     print("Hello world")
