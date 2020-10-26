@@ -8,6 +8,15 @@ class Gift:
     def __str__(self):
         raise NotImplementedError
     #
+    def fold(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, acc):
+        raise NotImplementedError
+    #
+    def foldback(self, fBook, fChocolate, fWrapped, fBoxed, fWithCard, facc):
+        raise NotImplementedError
+    #
+    def total_cost(self):
+        raise NotImplementedError
+    #
     def total_cost_fold(self):
         def fBook(acc, book: Book):
             return acc + book.price
