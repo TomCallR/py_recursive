@@ -1,51 +1,133 @@
 # Note : Linked list implementation does not have much interest beyond training
 # Python already has a collection type that is a linked list : deque
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, Callable, Union, Tuple, Any
 
 T = TypeVar("T")
 
-class Node(Generic[T]):
+def identity(x: Any):
+    return x
+
+
+class LinkedList(Generic[T]):
     """
         Singly linked list of elements of the same type
-        The checks performed by __init__() are meant to avoid different types
-        in the list nodes
+        LinkedList class is the base class for Cons and Empty classes
+        
+        :Example:
+
+        mylist: LinkedList[int] = Cons(1, Cons(2, Cons(3, Empty())))
     """
-    def __init__(self, head: T, tail):
-        if head is None:
-            raise TypeError
-        if tail is not None:
-            try:
-                tail_head = tail.head
-            except Exception as ex:
-                raise TypeError
-            if type(tail_head) != type(head):
-                raise TypeError
-        self.tail = tail
-        self.head = head
+    def __init__(self):
+        self.value = None
     #
-    def cata(self, fNode):
-        if self.tail is None:
-            return fNode(self.head, None)
-        else:
-            return fNode(self.head, self.tail.cata(fNode))
+    def cata(self, fCons, fEmpty):
+        pass
     #
-    def fold(self, fNode, acc):
-        newacc = fNode(acc, self.head)
-        if self.tail is None:
-            return newacc
-        else:
-            return self.tail.fold(fNode, newacc)
+    def fold(self, fCons, fEmpty, acc):
+        pass
     #
-    def foldback(self, fNode, fLeaf, facc):
-        if self.tail is None:
-            return facc(fLeaf(self.head))
+    def foldback(self, fCons, fEmpty, facc):
+        pass
+
+class Empty(LinkedList[T]):
+    #
+    def __init__(self):
+        super().__init__()
+    #
+    def __eq__(self, other: Any):
+        return isinstance(other, Empty)
+    #
+    def cata(self, fCons, fEmpty):
+        return fEmpty()
+    #
+    def fold(self, fCons, fEmpty, acc):
+        return fEmpty(acc)
+    #
+    def foldback(self, fCons, fEmpty, facc):
+        return facc(fEmpty())
+    #
+    def map_foldback(self, f: Callable[[T], Any]):
+        return Empty()
+    #
+    def filter_foldback(self, predicate: Callable[[T], bool]):
+        return Empty()
+    #
+    def rev_fold(self):
+        return Empty()
+
+class Cons(LinkedList[T]):
+    #
+    def __init__(self, value: T, next: LinkedList[T]):
+        self.value = value
+        self.next = next
+    # deep nested equality, necessary for tests
+    def __eq__(self, other: Any):
+        if isinstance(other, Cons):
+            equal_values = self.value.__eq__(other.value)
+            return equal_values and self.next.__eq__(other.next)        
         else:
-            def innerfacc(x, head: T):
-                return facc(fNode(head, x))
-            newfacc = lambda x: innerfacc(x, self.head)
-            return self.tail.foldback(fNode, fLeaf, newfacc)
+            return False
+    #
+    def cata(self, fCons, fEmpty):
+        return fCons(self.value, self.next.cata(fCons, fEmpty))
+    #
+    def fold(self, fCons, fEmpty, acc: Any):
+        newacc = fCons(acc, self.value)
+        return self.next.fold(fCons, fEmpty, newacc)
+    #
+    def foldback(self, fCons, fEmpty, facc):
+        def innerfunc(value, x):
+            return facc(fCons(value, x))
+        newfacc = lambda x: innerfunc(self.value, x)
+        return self.next.foldback(fCons, fEmpty, newfacc)
+    #
+    def map_foldback(self, f: Callable[[T], Any]):
+        def fCons(value, following_values):
+            return Cons(f(value), following_values)
+        def fEmpty():
+            return Empty()
+        return self.foldback(fCons, fEmpty, identity)
+    #
+    def filter_foldback(self, predicate: Callable[[T], bool]):
+        def fCons(value, following_items):
+            if predicate(value):
+                return Cons(value, following_items)
+            else:
+                return following_items
+        def fEmpty():
+            return Empty()
+        return self.foldback(fCons, fEmpty, identity)     
+    #
+    def rev_fold(self):
+        def fCons(acc, value):
+            return Cons(value, acc)
+        def fEmpty(acc):
+            return acc
+        return self.fold(fCons, fEmpty, Empty())
+
+#
+# https://devblogs.microsoft.com/python/pylance-introduces-five-new-features-that-enable-type-magic-for-python-developers/
+LList = Union[
+    None,
+    Tuple[T, "LList"]
+]
+
+def llist_cata(fCons, fEmpty, llist: LList):
+    if llist is None:
+        return fEmpty()
+    else:
+        value, next = llist
+        return fCons(value, llist_cata(fCons, fEmpty, next))
 
 
 #
 if __name__ == "__main__":
+    # test: LList = (1, (2, ("3", None)))
+    # def fEmpty():
+    #     print(None)
+    # def fCons(value, next):
+    #     print(value)
+    # llist_cata(fCons, fEmpty, test)
+    test: LinkedList[int] = Cons(1, Cons(2, Cons(3, Empty())))
+    test.cata(lambda x, y: print(x), lambda: print("None"))
     print("Hello world")
