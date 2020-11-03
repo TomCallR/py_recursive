@@ -155,8 +155,7 @@ class Union_LList(Generic[T]):
         def fEmpty():
             return None
         def fCons(value: T, x):
-            res: LList = (f(value), x)
-            return res
+            return (f(value), x)
         return cls.foldback(fCons, fEmpty, llist, identity)
     #
     @classmethod
@@ -164,10 +163,8 @@ class Union_LList(Generic[T]):
         def fEmpty():
             return None
         def fCons(value: T, x):
-            res: LList
             if predicate(value):
-                res = (value, x)
-                return res
+                return (value, x)
             else:
                 return x
         return cls.foldback(fCons, fEmpty, llist, identity)
@@ -177,8 +174,7 @@ class Union_LList(Generic[T]):
         def fEmpty(acc):
             return acc
         def fCons(acc, value: T):
-            res: LList = (value, acc)
-            return res
+            return (value, acc)
         return cls.fold(fCons, fEmpty, None, llist)
 
 #
