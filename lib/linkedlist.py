@@ -124,62 +124,66 @@ LList = Union[
 
 class Union_LList(Generic[T]):
     #
-    @classmethod
-    def cata(cls, fCons, fEmpty, llist: LList):
+    @staticmethod
+    def cata(fCons, fEmpty, llist: LList):
         if llist is None:
             return fEmpty()
         else:
             value, next = llist
-            return fCons(value, cls.cata(fCons, fEmpty, next))
+            return fCons(value, Union_LList.cata(fCons, fEmpty, next))
     #
-    @classmethod
-    def fold(cls, fCons, fEmpty, acc, llist: LList):
+    @staticmethod
+    def fold(fCons, fEmpty, acc, llist: LList):
         if llist is None:
             return fEmpty(acc)
         else:
             value, next = llist
             newacc = fCons(acc, value)
-            return cls.fold(fCons, fEmpty, newacc, next)
+            return Union_LList.fold(fCons, fEmpty, newacc, next)
     #
-    @classmethod
-    def foldback(cls, fCons, fEmpty, llist: LList, facc):
+    @staticmethod
+    def foldback(fCons, fEmpty, llist: LList, facc):
         if llist is None:
             return facc(fEmpty())
         else:
             value, next = llist
             newfacc = lambda x: facc(fCons(value, x))
-            return cls.foldback(fCons, fEmpty, next, newfacc)
+            return Union_LList.foldback(fCons, fEmpty, next, newfacc)
     #
-    @classmethod
-    def map_foldback(cls, llist: LList, f: Callable[[T], Any]):
+    @staticmethod
+    def map_foldback(llist: LList, f: Callable[[T], Any]):
         def fEmpty():
             return None
         def fCons(value: T, x):
-            res: LList = (f(value), x)
-            return res
-        return cls.foldback(fCons, fEmpty, llist, identity)
+            return (f(value), x)
+        return Union_LList.foldback(fCons, fEmpty, llist, identity)
     #
-    @classmethod
-    def filter_foldback(cls, llist: LList, predicate: Callable[[T], bool]):
+    @staticmethod
+    def filter_foldback(llist: LList, predicate: Callable[[T], bool]):
         def fEmpty():
             return None
         def fCons(value: T, x):
-            res: LList
             if predicate(value):
-                res = (value, x)
-                return res
+                return (value, x)
             else:
                 return x
-        return cls.foldback(fCons, fEmpty, llist, identity)
+        return Union_LList.foldback(fCons, fEmpty, llist, identity)
     #
-    @classmethod
-    def rev_fold(cls, llist: LList):
+    @staticmethod
+    def rev_fold(llist: LList):
         def fEmpty(acc):
             return acc
         def fCons(acc, value: T):
-            res: LList = (value, acc)
-            return res
-        return cls.fold(fCons, fEmpty, None, llist)
+            return (value, acc)
+        return Union_LList.fold(fCons, fEmpty, None, llist)
+
+#
+#
+# Third implementation using module ADT
+# See https://pypi.org/project/algebraic-data-types/
+#
+#   TODO
+
 
 #
 if __name__ == "__main__":

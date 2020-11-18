@@ -30,7 +30,7 @@ class Gift:
             return acc + D("2.00")
         return self.fold(fBook, fChocolate, fWrapped, fBoxed, fWithCard, D("0.00"))
 
-    # not quite satisfying : string bits mixes up
+    # not quite satisfying : string bits are in wrong order
     # def description_fold(self):
     #     def fBook(acc, book: Book):
     #         return f"\"{book.title}\" {acc}"
