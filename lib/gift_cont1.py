@@ -1,4 +1,4 @@
-# Generic typing
+# Typing
 # see PEP 483 and PEP 484
 
 # This option is working, but does not bring much benefit (class hierarchy still needed)
@@ -8,7 +8,7 @@ from enum import Enum
 from typing import TypeVar, Union, Tuple, Callable, Any
 
 #
-# Generic types
+# Base types
 #
 
 # Top class types
